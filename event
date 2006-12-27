@@ -524,7 +524,9 @@ struct dispatcher
 		internal::event_base_priority_init(_event_base, npriorities);
 	}
 
+#ifdef EVENT_BASE_FREE_FIX
 	~dispatcher() throw() { event_base_free(_event_base); }
+#endif
 
 	/**
 	 * Adds an event to the dispatcher.
