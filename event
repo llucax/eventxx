@@ -30,7 +30,7 @@
  * This is a simple, direct, one-header inline C++ wrapper for libevent.
  * It's designed to be as close to use to libevent without compromising modern
  * C++ programming techniques and efficiency (since all implementation is
- * trivial inline, theoretically it imposes no overhead at all).
+ * trivial and inline, theoretically, it imposes no overhead at all).
  *
  *
  * @section Usage
