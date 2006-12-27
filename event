@@ -292,7 +292,7 @@ struct event: basic_event
 	event(int fd, short ev, F& handler, int priority = DEFAULT_PRIORITY)
 		throw(invalid_priority)
 	{
-		event_set(this, fd, ev, &wrapper, &handler);
+		event_set(this, fd, ev, &wrapper, reinterpret_cast< void* >(&handler));
 		if (priority != DEFAULT_PRIORITY
 				&& event_priority_set(this, priority))
 			throw invalid_priority();
@@ -302,7 +302,7 @@ struct event: basic_event
 		event() {}
 		static void wrapper(int fd, short ev, void* h)
 		{
-			F& handler = *static_cast< F* >(h);
+			F& handler = *reinterpret_cast< F* >(h);
 			handler(fd, ev);
 		}
 
@@ -365,7 +365,8 @@ struct timer: event< F >
 	timer(F& handler, int priority = DEFAULT_PRIORITY)
 		throw(invalid_priority)
 	{
-		evtimer_set(this, &event< F >::wrapper, &handler);
+		evtimer_set(this, &event< F >::wrapper,
+			reinterpret_cast< void* >(&handler));
 		if (priority != DEFAULT_PRIORITY
 				&& event_priority_set(this, priority))
 			throw invalid_priority();
@@ -427,7 +428,8 @@ struct signal: event< F >
 	signal(int signum, F& handler, int priority = DEFAULT_PRIORITY)
 		throw(invalid_priority)
 	{
-		signal_set(this, signum, &event< F >::wrapper, &handler);
+		signal_set(this, signum, &event< F >::wrapper,
+			reinterpret_cast< void* >(&handler));
 		if (priority != DEFAULT_PRIORITY
 				&& event_priority_set(this, priority))
 			throw invalid_priority();
@@ -563,7 +565,8 @@ struct dispatcher
 	template < typename F >
 	void add_once(int fd, short ev, F& handler)
 	{
-		internal::event_once(fd, ev, &dispatcher::wrapper< F >, &handler, 0);
+		internal::event_once(fd, ev, &dispatcher::wrapper< F >,
+				reinterpret_cast< void* >(&handler), 0);
 	}
 
 	/**
@@ -596,7 +599,9 @@ struct dispatcher
 	template < typename F >
 	void add_once(int fd, short ev, F& handler, const time& to)
 	{
-		internal::event_once(fd, ev, &dispatcher::wrapper< F >, &handler, const_cast< time* >(&to)); // XXX HACK libevent don't use const
+		internal::event_once(fd, ev, &dispatcher::wrapper< F >,
+				reinterpret_cast< void* >(&handler),
+				const_cast< time* >(&to)); // XXX HACK libevent don't use const
 	}
 
 	/**
@@ -628,7 +633,9 @@ struct dispatcher
 	template < typename F >
 	void add_once_timer(F& handler, const time& to)
 	{
-		internal::event_once(-1, EV_TIMEOUT, &dispatcher::wrapper< F >, &handler, const_cast< time* >(&to)); // XXX HACK libevent don't use const
+		internal::event_once(-1, EV_TIMEOUT, &dispatcher::wrapper< F >,
+				reinterpret_cast< void* >(&handler),
+				const_cast< time* >(&to)); // XXX HACK libevent don't use const
 	}
 
 	/**
@@ -694,7 +701,7 @@ struct dispatcher
 		template < typename F >
 		static void wrapper(int fd, short ev, void* h)
 		{
-			F& handler = *static_cast< F* >(h);
+			F& handler = *reinterpret_cast< F* >(h);
 			handler(fd, ev);
 		}
 
