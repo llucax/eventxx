@@ -88,8 +88,8 @@ run_once(void)
 	static eventxx::time ts, te;
 
 	for (cp = pipes, i = 0; i < num_pipes; i++, cp += 2) {
-		events.push_back(new eventxx::cevent(cp[0], EV_READ | EV_PERSIST,
-			read_cb, (void *) i));
+		events.push_back(new eventxx::cevent(cp[0],
+			eventxx::READ | eventxx::PERSIST, read_cb, (void *) i));
 		d.add(*events[i]);
 	}
 

@@ -130,7 +130,9 @@ struct invalid_priority: public std::invalid_argument, public exception
 /// Miscelaneous constants
 enum
 {
-	DEFAULT_PRIORITY = -1 ///< Default priority (the middle value)
+	DEFAULT_PRIORITY = -1,      ///< Default priority (the middle value).
+	ONCE = EVLOOP_ONCE,         ///< Loop just once.
+	NONBLOCK = EVLOOP_NONBLOCK  ///< Don't block the event loop.
 };
 
 
@@ -190,6 +192,26 @@ struct time: ::timeval
 //@{
 
 /**
+ * Type of events.
+ *
+ * There are 4 kind of events: eventxx::TIMEOUT, eventxx::READ, eventxx::WRITE
+ * or eventxx::SIGNAL. eventxx::PERSIST is not an event, is an event modifier
+ * flag, that tells eventxx that this event should live until dispatcher::del()
+ * is called. You can use, for example:
+ * @code
+ * eventxx::event(fd, eventxx::READ | eventxx::PERSIST, ...);
+ * @endcode
+ */
+enum type
+{
+	TIMEOUT = EV_TIMEOUT, ///< Timeout event.
+	READ = EV_READ,       ///< Read event.
+	WRITE = EV_WRITE,     ///< Write event.
+	SIGNAL = EV_SIGNAL,   ///< Signal event.
+	PERSIST = EV_PERSIST  ///< Not really an event, is an event modifier.
+};
+
+/**
  * Basic event from which all events derive.
  *
  * All events derive from this class, so it's useful for use in containers,
@@ -208,7 +230,7 @@ struct basic_event: internal::event
 	 *
 	 * @return true if there is a pending event, false if not.
 	 */
-	bool pending(short ev) const throw()
+	bool pending(type ev) const throw()
 	{
 		// HACK libevent don't use const
 		return event_pending(const_cast< basic_event* >(this), ev, 0);
@@ -272,10 +294,11 @@ struct basic_event: internal::event
  * This object stores all the information about an event, incluiding a callback
  * functor, which is called when the event is fired. The template parameter
  * must be a functor (callable object or function) that can take 2 parameters:
- * an integer (the file descriptor of the fired event) and a short (the type of
- * the fired event: EV_TIMEOUT, EV_SIGNAL, EV_READ, EV_WRITE). There is a
- * specialized version of this class which takes as the template parameter a C
- * function with the ccallback_type signature, just like C libevent API does.
+ * an integer (the file descriptor of the fired event) and an event::type (the
+ * type of event being fired).
+ * There is a specialized version of this class which takes as the template
+ * parameter a C function with the ccallback_type signature, just like C
+ * libevent API does.
  *
  * @see eventxx::event< ccallback_type >
  */
@@ -287,12 +310,13 @@ struct event: basic_event
 	 * Creates a new event.
 	 *
 	 * @param fd File descriptor to monitor for events.
-	 * @param ev Type of events to monitor.
+	 * @param ev Type of events to monitor (see eventxx::type).
 	 * @param handler Callback functor.
 	 */
 	event(int fd, short ev, F& handler) throw()
 	{
-		event_set(this, fd, ev, &wrapper, reinterpret_cast< void* >(&handler));
+		event_set(this, fd, ev, &wrapper,
+				reinterpret_cast< void* >(&handler));
 	}
 
 	protected:
@@ -300,7 +324,9 @@ struct event: basic_event
 		static void wrapper(int fd, short ev, void* h)
 		{
 			F& handler = *reinterpret_cast< F* >(h);
-			handler(fd, ev);
+			// Hackish, but this way the handler can get a clean
+			// event type
+			handler(fd, *reinterpret_cast< type* >(&ev));
 		}
 
 }; // struct event< F >
@@ -319,7 +345,7 @@ struct event< ccallback_type >: basic_event
 	 * Creates a new event.
 	 *
 	 * @param fd File descriptor to monitor for events.
-	 * @param ev Type of events to monitor.
+	 * @param ev Type of events to monitor (see eventxx::type).
 	 * @param handler C-style callback function.
 	 * @param arg Arbitrary pointer to pass to the handler as argument.
 	 */
@@ -338,9 +364,12 @@ struct event< ccallback_type >: basic_event
  * Timer event object.
  *
  * This is just a special case of event that is fired only when a timeout is
- * reached. It's just a shortcut to event(-1, 0, handler).
+ * reached. It's just a shortcut to:
+ * @code
+ * event(-1, 0, handler);
+ * @endcode
  *
- * @note This event can't EV_PERSIST.
+ * @note This event can't eventxx::PERSIST.
  * @see timer< ccallback_type >
  */
 template < typename F >
@@ -364,7 +393,7 @@ struct timer: event< F >
 /**
  * This is the specialization of eventxx::timer for C-style callbacks.
  *
- * @note This event can't EV_PERSIST.
+ * @note This event can't eventxx::PERSIST.
  * @see timer
  */
 template <>
@@ -389,10 +418,12 @@ struct timer< ccallback_type >: event< ccallback_type >
  * Signal event object.
  *
  * This is just a special case of event that is fired when a signal is raised
- * (instead of a file descriptor being active). It's just a shortcut to
- * event(signal, EV_SIGNAL, handler).
+ * (instead of a file descriptor being active). It's just a shortcut to:
+ * @code
+ * event(signum, eventxx::SIGNAL, handler);
+ * @endcode
  *
- * @note This event always EV_PERSIST.
+ * @note This event always eventxx::PERSIST.
  * @see signal< ccallback_type >
  */
 template < typename F >
@@ -427,7 +458,7 @@ struct signal: event< F >
 /**
  * This is the specialization of eventxx::signal for C-style callbacks.
  *
- * @note This event always EV_PERSIST.
+ * @note This event always eventxx::PERSIST.
  * @see signal
  */
 template <>
@@ -549,14 +580,14 @@ struct dispatcher
 	 * Adds a temporary event.
 	 *
 	 * Adds a temporary event, without the need of instantiating a new event
-	 * object. Events added this way can't EV_PERSIST.
+	 * object. Events added this way can't eventxx::PERSIST.
 	 *
 	 * @param fd File descriptor to monitor for events.
 	 * @param ev Type of events to monitor.
 	 * @param handler Callback function.
 	 */
 	template < typename F >
-	void add_once(int fd, short ev, F& handler)
+	void add_once(int fd, type ev, F& handler)
 	{
 		internal::event_once(fd, ev, &dispatcher::wrapper< F >,
 				reinterpret_cast< void* >(&handler), 0);
@@ -566,14 +597,14 @@ struct dispatcher
 	 * Adds a temporary event to with a C-style callback.
 	 *
 	 * Adds a temporary event, without the need of instantiating a new event
-	 * object. Events added this way can't EV_PERSIST.
+	 * object. Events added this way can't eventxx::PERSIST.
 	 *
 	 * @param fd File descriptor to monitor for events.
 	 * @param ev Type of events to monitor.
 	 * @param handler Callback function.
 	 * @param arg Arbitrary pointer to pass to the handler as argument.
 	 */
-	void add_once(int fd, short ev, ccallback_type handler, void* arg)
+	void add_once(int fd, type ev, ccallback_type handler, void* arg)
 	{
 		internal::event_once(fd, ev, handler, arg, 0);
 	}
@@ -582,7 +613,7 @@ struct dispatcher
 	 * Adds a temporary event.
 	 *
 	 * Adds a temporary event, without the need of instantiating a new event
-	 * object. Events added this way can't EV_PERSIST.
+	 * object. Events added this way can't eventxx::PERSIST.
 	 *
 	 * @param fd File descriptor to monitor for events.
 	 * @param ev Type of events to monitor.
@@ -590,7 +621,7 @@ struct dispatcher
 	 * @param to Timeout.
 	 */
 	template < typename F >
-	void add_once(int fd, short ev, F& handler, const time& to)
+	void add_once(int fd, type ev, F& handler, const time& to)
 	{
 		internal::event_once(fd, ev, &dispatcher::wrapper< F >,
 				reinterpret_cast< void* >(&handler),
@@ -601,7 +632,7 @@ struct dispatcher
 	 * Adds a temporary event with a C-style callback.
 	 *
 	 * Adds a temporary event, without the need of instantiating a new event
-	 * object. Events added this way can't EV_PERSIST.
+	 * object. Events added this way can't eventxx::PERSIST.
 	 *
 	 * @param fd File descriptor to monitor for events.
 	 * @param ev Type of events to monitor.
@@ -609,7 +640,7 @@ struct dispatcher
 	 * @param arg Arbitrary pointer to pass to the handler as argument.
 	 * @param to Timeout.
 	 */
-	void add_once(int fd, short ev, ccallback_type handler, void* arg, const time& to)
+	void add_once(int fd, type ev, ccallback_type handler, void* arg, const time& to)
 	{
 		internal::event_once(fd, ev, handler, arg, const_cast< time* >(&to)); // XXX HACK libevent don't use const
 	}
@@ -667,11 +698,11 @@ struct dispatcher
 	 * - exit() was called.
 	 * - All events were del()eted.
 	 * - Another internal error.
-	 * - LOOP_ONCE flag was set.
-	 * - LOOP_NONBLOCK flag was set.
+	 * - eventxx::ONCE flag was set.
+	 * - eventxx::NONBLOCK flag was set.
 	 *
-	 * @param flags If EVLOOP_ONCE is specified, then just one event is
-	 *              processed, if EVLOOP_NONBLOCK is specified, then this
+	 * @param flags If eventxx::ONCE is specified, then just one event is
+	 *              processed, if eventxx::NONBLOCK is specified, then this
 	 *              function returns even if there are no pending events.
 	 */
 	int dispatch(int flags = 0) // TODO  throw(exception)
@@ -687,16 +718,18 @@ struct dispatcher
 	 */
 	int exit(const time& to = time())
 	{
-		return internal::event_base_loopexit(_event_base, const_cast< time* >(&to)); // XXX HACK libevent don't use const
+		// XXX HACK libevent don't use const
+		return internal::event_base_loopexit(_event_base,
+			const_cast< time* >(&to));
 	}
 
 	protected:
 		internal::event_base* _event_base;
 		template < typename F >
-		static void wrapper(int fd, short ev, void* h)
+		static void wrapper(int fd, type ev, void* h)
 		{
 			F& handler = *reinterpret_cast< F* >(h);
-			handler(fd, ev);
+			handler(fd, *reinterpret_cast< type* >(&ev));
 		}
 
 }; // struct dispatcher
