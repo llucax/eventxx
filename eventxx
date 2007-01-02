@@ -25,7 +25,7 @@
  * to redesign the applications. As a result, Libevent allows for portable
  * application development and provides the most scalable event notification
  * mechanism available on an operating system. Libevent should compile on Linux,
- * *BSD, Mac OS X, Solaris and Windows. 
+ * *BSD, Mac OS X, Solaris and Windows.
  *
  * This is a simple, direct, one-header inline C++ wrapper for libevent.
  * It's designed to be as close to use to libevent without compromising modern
@@ -232,6 +232,8 @@ struct basic_event: internal::event
 	 *
 	 * @param priority New event priority.
 	 *
+	 * @pre The event must be added to some dispatcher.
+	 *
 	 * @see dispatcher::dispatcher(int)
 	 */
 	void priority(int priority) const throw(invalid_event, invalid_priority)
@@ -268,12 +270,12 @@ struct basic_event: internal::event
  * Generic event object.
  *
  * This object stores all the information about an event, incluiding a callback
- * functor, which is called then the event is fired. Then template parameter
- * must be a callable object (functor) that can take 2 parameters: an integer
- * (the file descriptor of the fired event) and a short (the type of event
- * fired: EV_TIMEOUT, EV_SIGNAL, EV_READ, EV_WRITE). There is an specialized
- * version of this class which takes as the template parameter a C function
- * with the ccallback_type signature, just like C libevent API does.
+ * functor, which is called when the event is fired. The template parameter
+ * must be a functor (callable object or function) that can take 2 parameters:
+ * an integer (the file descriptor of the fired event) and a short (the type of
+ * the fired event: EV_TIMEOUT, EV_SIGNAL, EV_READ, EV_WRITE). There is a
+ * specialized version of this class which takes as the template parameter a C
+ * function with the ccallback_type signature, just like C libevent API does.
  *
  * @see eventxx::event< ccallback_type >
  */
@@ -371,7 +373,7 @@ struct timer< ccallback_type >: event< ccallback_type >
 
 	/**
 	 * Creates a new timer event.
-	 * 
+	 *
 	 * @param handler C-style callback function.
 	 * @param arg Arbitrary pointer to pass to the handler as argument.
 	 */
@@ -390,7 +392,7 @@ struct timer< ccallback_type >: event< ccallback_type >
  * (instead of a file descriptor being active). It's just a shortcut to
  * event(signal, EV_SIGNAL, handler).
  *
- * @note This event allways EV_PERSIST.
+ * @note This event always EV_PERSIST.
  * @see signal< ccallback_type >
  */
 template < typename F >
@@ -425,7 +427,7 @@ struct signal: event< F >
 /**
  * This is the specialization of eventxx::signal for C-style callbacks.
  *
- * @note This event allways EV_PERSIST.
+ * @note This event always EV_PERSIST.
  * @see signal
  */
 template <>
@@ -446,7 +448,7 @@ struct signal< ccallback_type >: event< ccallback_type >
 
 	/**
 	 * Event's signal number.
-	 * 
+	 *
 	 * @return Event's signal number.
 	 */
 	int signum() const
@@ -479,10 +481,10 @@ struct dispatcher
 {
 
 	/**
-	 * Creates a default dispatcher (with just 1 prioriority).
+	 * Creates a default dispatcher (with just 1 priority).
 	 *
 	 * @see dispatcher(int) if you want to create a dispatcher with more
-	 *      prioriorities.
+	 *      priorities.
 	 */
 	dispatcher() throw()
 	{
@@ -490,8 +492,8 @@ struct dispatcher
 	}
 
 	/**
-	 * Creates a dispatcher with npriorities prioriorities.
-	 * 
+	 * Creates a dispatcher with npriorities priorities.
+	 *
 	 * @param npriorities Number of priority queues to use.
 	 */
 	dispatcher(int npriorities) throw(std::bad_alloc)
@@ -525,7 +527,7 @@ struct dispatcher
 	/**
 	 * Adds an event to the dispatcher with a timeout.
 	 *
-	 * The event is fired when there is activity on e or when to is elapsed,
+	 * The event is fired when there is activity on e or when to has elapsed,
 	 * whatever come first.
 	 *
 	 * @param e Event to add.
@@ -659,8 +661,8 @@ struct dispatcher
 	/**
 	 * Main dispatcher loop.
 	 *
-	 * This function takes the control of the program, waiting for event and
-	 * calling it's callbacks when they are fired. It only returns under
+	 * This function takes the control of the program, waiting for an event
+	 * and calling its callbacks when it's fired. It only returns under
 	 * this conditions:
 	 * - exit() was called.
 	 * - All events were del()eted.
@@ -670,7 +672,7 @@ struct dispatcher
 	 *
 	 * @param flags If EVLOOP_ONCE is specified, then just one event is
 	 *              processed, if EVLOOP_NONBLOCK is specified, then this
-	 *              function returns whenever as an event or not.
+	 *              function returns even if there are no pending events.
 	 */
 	int dispatch(int flags = 0) // TODO  throw(exception)
 	{
@@ -680,7 +682,8 @@ struct dispatcher
 	/**
 	 * Exit the dispatch() loop.
 	 *
-	 * @param to If a timeout is given, the loop exits after to is passed.
+	 * @param to If a timeout is given, the loop exits after the specified
+	 *           time is elapsed.
 	 */
 	int exit(const time& to = time())
 	{
