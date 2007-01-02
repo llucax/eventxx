@@ -20,15 +20,15 @@
 #include <csignal>
 #include <cerrno>
 
-#include <event>
+#include <eventxx>
 
 typedef void (cb_t)(int, short);
 
 int pair[2];
 int test_okay = 1;
 int called = 0;
-event::dispatcher d;
-event::event< cb_t >* ev;
+eventxx::dispatcher d;
+eventxx::event< cb_t >* ev;
 
 void
 write_cb(int fd, short event)
@@ -61,7 +61,7 @@ main (int argc, char **argv)
 		return (1);
 
 	/* Initalize one event */
-	ev = new event::event< cb_t >(pair[1], EV_WRITE, write_cb);
+	ev = new eventxx::event< cb_t >(pair[1], EV_WRITE, write_cb);
 
 	d.add(*ev);
 

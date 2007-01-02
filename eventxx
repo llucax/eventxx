@@ -1,5 +1,5 @@
-#ifndef _EVENT_HPP_
-#define _EVENT_HPP_
+#ifndef _EVENTXX_HPP_
+#define _EVENTXX_HPP_
 
 #include <sys/types.h> // timeval (hack -> event.h don't include it)
 #include <stdexcept>   // std::exception, std::invalid_argument,
@@ -49,7 +49,7 @@
 /**
  * Namespace for all symbols libevent C++ wrapper defines.
  */
-namespace event
+namespace eventxx
 {
 
 
@@ -195,7 +195,7 @@ struct time: ::timeval
  * All events derive from this class, so it's useful for use in containers,
  * like:
  * @code
- * std::list< event::basic_event* > events;
+ * std::list< eventxx::basic_event* > events;
  * @endcode
  */
 struct basic_event: internal::event
@@ -275,7 +275,7 @@ struct basic_event: internal::event
  * version of this class which takes as the template parameter a C function
  * with the ccallback_type signature, just like C libevent API does.
  *
- * @see event::event< ccallback_type >
+ * @see eventxx::event< ccallback_type >
  */
 template < typename F >
 struct event: basic_event
@@ -310,9 +310,9 @@ struct event: basic_event
 
 
 /**
- * This is the specialization of event::event for C-style callbacks.
+ * This is the specialization of eventxx::event for C-style callbacks.
  *
- * @see event::event
+ * @see eventxx::event
  */
 template <>
 struct event< ccallback_type >: basic_event
@@ -376,13 +376,13 @@ struct timer: event< F >
 
 
 /**
- * This is the specialization of event::timer for C-style callbacks.
+ * This is the specialization of eventxx::timer for C-style callbacks.
  *
  * @note This event can't EV_PERSIST.
  * @see timer
  */
 template <>
-struct timer< ccallback_type >: event::event< ccallback_type >
+struct timer< ccallback_type >: event< ccallback_type >
 {
 
 	/**
@@ -449,7 +449,7 @@ struct signal: event< F >
 
 
 /**
- * This is the specialization of event::signal for C-style callbacks.
+ * This is the specialization of eventxx::signal for C-style callbacks.
  *
  * @note This event allways EV_PERSIST.
  * @see signal
@@ -487,6 +487,16 @@ struct signal< ccallback_type >: event< ccallback_type >
 	}
 
 }; // struct signal< ccallback_type >
+
+
+/// Shortcut to C-style event.
+typedef eventxx::event< ccallback_type > cevent;
+
+/// Shortcut to C-style timer.
+typedef eventxx::timer< ccallback_type > ctimer;
+
+/// Shortcut to C-style signal handler.
+typedef eventxx::signal< ccallback_type > csignal;
 
 
 //@}
@@ -710,18 +720,8 @@ struct dispatcher
 }; // struct dispatcher
 
 
-/// Shortcut to C-style event.
-typedef event::event< ccallback_type > cevent;
-
-/// Shortcut to C-style timer.
-typedef event::timer< ccallback_type > ctimer;
-
-/// Shortcut to C-style signal handler.
-typedef event::signal< ccallback_type > csignal;
-
-
 } // namespace event
 
-#endif // _EVENT_HPP_
+#endif // _EVENTXX_HPP_
 
 // vim: set filetype=cpp :

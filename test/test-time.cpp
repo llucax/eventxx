@@ -18,14 +18,14 @@
 #include <cstring>
 #include <cerrno>
 
-#include <event>
+#include <eventxx>
 
 int called = 0;
 
 #define NEVENT	20000
 
-event::ctimer* ev[NEVENT];
-event::dispatcher d;
+eventxx::ctimer* ev[NEVENT];
+eventxx::dispatcher d;
 
 void
 time_cb(int fd, short event, void *arg)
@@ -34,7 +34,7 @@ time_cb(int fd, short event, void *arg)
 
 	if (called < 10*NEVENT) {
 		for (int i = 0; i < 10; i++) {
-			event::time tv(0, random() % 50000L);
+			eventxx::time tv(0, random() % 50000L);
 			int j = random() % NEVENT;
 			if (tv.usec() % 2)
 				d.add(*ev[j], tv);
@@ -49,8 +49,8 @@ main (int argc, char **argv)
 {
 	for (int i = 0; i < NEVENT; i++) {
 		/* Initalize one event */
-		ev[i] = new event::ctimer(time_cb, NULL);
-		d.add(*ev[i], event::time(0, random() % 50000L));
+		ev[i] = new eventxx::ctimer(time_cb, NULL);
+		d.add(*ev[i], eventxx::time(0, random() % 50000L));
 	}
 
 	d.dispatch();

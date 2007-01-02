@@ -55,14 +55,14 @@
 #include <cerrno>
 #include <vector>
 
-#include <event>
+#include <eventxx>
 
 
 static int count, writes, fired;
 static int *pipes;
 static int num_pipes, num_active, num_writes;
-static std::vector< event::cevent* > events;
-static event::dispatcher d;
+static std::vector< eventxx::cevent* > events;
+static eventxx::dispatcher d;
 
 
 void
@@ -81,14 +81,14 @@ read_cb(int fd, short which, void *arg)
 	}
 }
 
-event::time *
+eventxx::time *
 run_once(void)
 {
 	int *cp, i, space;
-	static event::time ts, te;
+	static eventxx::time ts, te;
 
 	for (cp = pipes, i = 0; i < num_pipes; i++, cp += 2) {
-		events.push_back(new event::cevent(cp[0], EV_READ | EV_PERSIST,
+		events.push_back(new eventxx::cevent(cp[0], EV_READ | EV_PERSIST,
 			read_cb, (void *) i));
 		d.add(*events[i]);
 	}
@@ -131,7 +131,7 @@ main (int argc, char **argv)
 {
 	struct rlimit rl;
 	int i, c;
-	event::time* tv;
+	eventxx::time* tv;
 	int *cp;
 	extern char *optarg;
 

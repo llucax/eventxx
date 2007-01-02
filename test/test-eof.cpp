@@ -20,12 +20,12 @@
 #include <cstring>
 #include <cerrno>
 
-#include <event>
+#include <eventxx>
 
 int test_okay = 1;
 int called = 0;
-event::dispatcher d;
-event::cevent* ev;
+eventxx::dispatcher d;
+eventxx::cevent* ev;
 
 void
 read_cb(int fd, short event, void *arg)
@@ -60,7 +60,7 @@ main (int argc, char **argv)
 	shutdown(pair[0], SHUT_WR);
 
 	/* Initalize one event */
-	ev = new event::cevent(pair[1], EV_READ, read_cb, NULL);
+	ev = new eventxx::cevent(pair[1], EV_READ, read_cb, NULL);
 
 	d.add(*ev);
 
