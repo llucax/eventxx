@@ -287,15 +287,10 @@ struct event: basic_event
 	 * @param fd File descriptor to monitor for events.
 	 * @param ev Type of events to monitor.
 	 * @param handler Callback functor.
-	 * @param priority Priority of the event.
 	 */
-	event(int fd, short ev, F& handler, int priority = DEFAULT_PRIORITY)
-		throw(invalid_priority)
+	event(int fd, short ev, F& handler) throw()
 	{
 		event_set(this, fd, ev, &wrapper, reinterpret_cast< void* >(&handler));
-		if (priority != DEFAULT_PRIORITY
-				&& event_priority_set(this, priority))
-			throw invalid_priority();
 	}
 
 	protected:
@@ -325,16 +320,10 @@ struct event< ccallback_type >: basic_event
 	 * @param ev Type of events to monitor.
 	 * @param handler C-style callback function.
 	 * @param arg Arbitrary pointer to pass to the handler as argument.
-	 * @param priority Priority of the event.
 	 */
-	event(int fd, short ev, ccallback_type handler, void* arg,
-			int priority = DEFAULT_PRIORITY)
-		throw(invalid_priority)
+	event(int fd, short ev, ccallback_type handler, void* arg) throw()
 	{
 		event_set(this, fd, ev, handler, arg);
-		if (priority != DEFAULT_PRIORITY
-				&& event_priority_set(this, priority))
-			throw invalid_priority();
 	}
 
 	protected:
@@ -347,7 +336,7 @@ struct event< ccallback_type >: basic_event
  * Timer event object.
  *
  * This is just a special case of event that is fired only when a timeout is
- * reached. It's just a shortcut to event(-1, 0, handler, priority).
+ * reached. It's just a shortcut to event(-1, 0, handler).
  *
  * @note This event can't EV_PERSIST.
  * @see timer< ccallback_type >
@@ -360,16 +349,11 @@ struct timer: event< F >
 	 * Creates a new timer event.
 	 *
 	 * @param handler Callback functor.
-	 * @param priority Priority of the event.
 	 */
-	timer(F& handler, int priority = DEFAULT_PRIORITY)
-		throw(invalid_priority)
+	timer(F& handler) throw()
 	{
 		evtimer_set(this, &event< F >::wrapper,
 			reinterpret_cast< void* >(&handler));
-		if (priority != DEFAULT_PRIORITY
-				&& event_priority_set(this, priority))
-			throw invalid_priority();
 	}
 
 }; // struct timer< F >
@@ -390,15 +374,10 @@ struct timer< ccallback_type >: event< ccallback_type >
 	 * 
 	 * @param handler C-style callback function.
 	 * @param arg Arbitrary pointer to pass to the handler as argument.
-	 * @param priority Priority of the event.
 	 */
-	timer(ccallback_type handler, void* arg, int priority = DEFAULT_PRIORITY)
-		throw(invalid_priority)
+	timer(ccallback_type handler, void* arg) throw()
 	{
 		evtimer_set(this, handler, arg);
-		if (priority != DEFAULT_PRIORITY
-				&& event_priority_set(this, priority))
-			throw invalid_priority();
 	}
 
 }; // struct timer< ccallback_type >
@@ -409,7 +388,7 @@ struct timer< ccallback_type >: event< ccallback_type >
  *
  * This is just a special case of event that is fired when a signal is raised
  * (instead of a file descriptor being active). It's just a shortcut to
- * event(signal, EV_SIGNAL, handler, priority).
+ * event(signal, EV_SIGNAL, handler).
  *
  * @note This event allways EV_PERSIST.
  * @see signal< ccallback_type >
@@ -423,16 +402,11 @@ struct signal: event< F >
 	 *
 	 * @param signum Signal number to monitor.
 	 * @param handler Callback functor.
-	 * @param priority Priority of the event.
 	 */
-	signal(int signum, F& handler, int priority = DEFAULT_PRIORITY)
-		throw(invalid_priority)
+	signal(int signum, F& handler) throw()
 	{
 		signal_set(this, signum, &event< F >::wrapper,
 			reinterpret_cast< void* >(&handler));
-		if (priority != DEFAULT_PRIORITY
-				&& event_priority_set(this, priority))
-			throw invalid_priority();
 	}
 
 	/**
@@ -464,16 +438,10 @@ struct signal< ccallback_type >: event< ccallback_type >
 	 * @param signum Signal number to monitor.
 	 * @param handler C-style callback function.
 	 * @param arg Arbitrary pointer to pass to the handler as argument.
-	 * @param priority Priority of the event.
 	 */
-	signal(int signum, ccallback_type handler, void* arg,
-			int priority = DEFAULT_PRIORITY)
-		throw(invalid_priority)
+	signal(int signum, ccallback_type handler, void* arg) throw()
 	{
 		signal_set(this, signum, handler, arg);
-		if (priority != DEFAULT_PRIORITY
-				&& event_priority_set(this, priority))
-			throw invalid_priority();
 	}
 
 	/**
@@ -542,10 +510,15 @@ struct dispatcher
 	 * Adds an event to the dispatcher.
 	 *
 	 * @param e Event to add.
+	 * @param priority Priority of the event.
 	 */
-	void add(basic_event& e) throw()
+	void add(basic_event& e, int priority = DEFAULT_PRIORITY)
+		throw(invalid_priority)
 	{
 		internal::event_base_set(_event_base, &e);
+		if (priority != DEFAULT_PRIORITY
+				&& internal::event_priority_set(&e, priority))
+			throw invalid_priority();
 		internal::event_add(&e, 0);
 	}
 
@@ -557,10 +530,16 @@ struct dispatcher
 	 *
 	 * @param e Event to add.
 	 * @param to Timeout.
+	 * @param priority Priority of the event.
 	 */
-	void add(basic_event& e, const time& to) throw()
+	void add(basic_event& e, const time& to,
+			int priority = DEFAULT_PRIORITY)
+		throw(invalid_priority)
 	{
 		internal::event_base_set(_event_base, &e);
+		if (priority != DEFAULT_PRIORITY
+				&& internal::event_priority_set(&e, priority))
+			throw invalid_priority();
 		internal::event_add(&e, const_cast< time* >(&to)); // XXX HACK libevent don't use const
 	}
 
