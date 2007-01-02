@@ -67,7 +67,7 @@ namespace internal
 /**
  * Base class for all libevent exceptions.
  */
-struct exception: std::exception
+struct exception: public std::exception
 {
 };
 
@@ -81,7 +81,7 @@ struct exception: std::exception
  *
  * If you hit this exception, you probably got a programming error.
  */
-struct invalid_event: std::invalid_argument, exception
+struct invalid_event: public std::invalid_argument, public exception
 {
 
 	/**
@@ -108,7 +108,7 @@ struct invalid_event: std::invalid_argument, exception
  *
  * @see dispatcher::dispatcher(int) to allocate more priority queues.
  */
-struct invalid_priority: std::invalid_argument, exception
+struct invalid_priority: public std::invalid_argument, public exception
 {
 
 	/**
