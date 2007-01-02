@@ -1,11 +1,11 @@
 
-CXXFLAGS=-I.. -g
+CXXFLAGS=-I.. -g -Wall
 # Uncomment this if you have a fixed event_base_free().
 # See http://www.mail-archive.com/libevent-users@monkey.org/msg00112.html
-#CXXFLAGS+=-DEVENT_BASE_FREE_FIX
+CXXFLAGS+=-DEVENT_BASE_FREE_FIX
 LDFLAGS=-levent
 
-targets=bench test-eof test-time test-weof
+targets=bench test-eof test-time test-weof trivial c-way
 
 all: $(targets)
 
