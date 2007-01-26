@@ -38,9 +38,13 @@
  * Please, visit the <a href="http://www.llucax.com.ar/~luca/eventxx/">eventxx
  * website</a> for the latest documentation.
  *
- * You can always <a href="http://www.lluca.com.ar/~lucax/repos/eventxx/">get
- * the most up to date sources</a> from the
- * <a href="http://www.darcs.net/">darcs</a>.
+ * You can always get the
+ * <a href="http://www.llucax.com.ar/~luca/eventxx/releases/current.tar.gz">current
+ * release</a> from the
+ * <a href="http://www.llucax.com.ar/~luca/eventxx/releases/">release
+ * directory</a> or grab the
+ * <a href="http://www.llucax.com.ar/~luca/repos/eventxx/">most up to date
+ * sources</a> from the <a href="http://www.darcs.net/">darcs</a> repository.
  *
  * You can also take a look the the <a
  * href="http://auriga.wearlab.de/~alb/darcsweb/">darcsweb</a> interface to see
