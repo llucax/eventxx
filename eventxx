@@ -196,12 +196,17 @@
 
 /** @example test-time.cpp
  *
- * This is a timer usage example.
+ * This is a timer usage example ported from libevent.
+ */
+
+/** @example test-eof.cpp
+ *
+ * This is some kind of test of EOF ported from libevent.
  */
 
 /** @example test-weof.cpp
  *
- * This is some kind of test of EOF ported from libevent.
+ * Another test of EOF ported from libevent.
  */
 
 /** @example trivial.cpp
