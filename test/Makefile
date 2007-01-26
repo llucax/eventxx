@@ -5,7 +5,8 @@ CXXFLAGS=-I.. -g -Wall
 #CXXFLAGS+=-DEVENT_BASE_FREE_FIX
 LDFLAGS=-levent
 
-targets=bench test-eof test-time test-weof trivial c-way functor-way prio-test
+targets=bench test-eof test-time test-weof trivial c-way functor-way \
+	prio-test mixed-way
 
 all: $(targets)
 
