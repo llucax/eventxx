@@ -51,8 +51,8 @@
  * @section Usage
  *
  * This wrapper was designed to be used just like libevent, but with C++ style
- * syntax sugar (or poisson, depends on your point of view ;) and goodies. The
- * main difference to libevent is you allways have to instance a
+ * syntax sugar (or poison, depends on your point of view ;) and goodies. The
+ * main difference to libevent is you always have to instance a
  * eventxx::dispatcher to get an event loop. There is no implicit global event
  * loop. This adds just an extra line of code for single threaded applications
  * and makes things much more simple. See eventxx::dispatcher documentation for
@@ -129,7 +129,7 @@
  * @section Status
  *
  * This library was not widely used yet, it lack some testing. Because templates
- * are not even compiled when they are used, you can be surprissed if you catch
+ * are not even compiled when they are used, you can't be surprised if you catch
  * a piece of code that didn't got even compiled yet because the lack of
  * testing. The library has no support for buffered events yet either. It
  * doesn't support the http stuff, and probably never will because that has
@@ -145,7 +145,7 @@
  * event_base_free() gets called.
  *
  * That said, I think it's pretty usable anyways. If something is broken it
- * would be really easy to fix it because is just a simple wrapper arround
+ * would be really easy to fix it because is just a simple wrapper around
  * libevent. So, please try it out, and if you have any problems,
  * <a href="mailto:llucax+eventxx@gmail.com">drop me an
  * e-mail</a> and and I'll fix it ASAP (or provide a patch and you will be my
@@ -168,19 +168,19 @@
 
 /** @example c-way.cpp
  *
- * This is a simple example ilustrating the usage with C-like callback
+ * This is a simple example illustrating the usage with C-like callback
  * functions.
  */
 
 /** @example functor-way.cpp
  *
- * This is a simple example ilustrating the usage with function object
+ * This is a simple example illustrating the usage with function object
  * callbacks.
  */
 
 /** @example mixed-way.cpp
  *
- * This is a simple example ilustrating the usage with a mix of C-like callbacks
+ * This is a simple example illustrating the usage with a mix of C-like callbacks
  * and function object callbacks.
  */
 
@@ -191,7 +191,7 @@
 
 /** @example prio-test.cpp
  *
- * This is a priotity usage example.
+ * This is a priority usage example.
  */
 
 /** @example test-time.cpp
@@ -271,7 +271,7 @@ struct invalid_event: public std::invalid_argument, public exception
  * Invalid priority exception.
  *
  * This exception is thrown when passing an invalid priority to a function. This
- * usually means you don't have enought priority queues in your dispatcher, so
+ * usually means you don't have enough priority queues in your dispatcher, so
  * you should have allocated more in the constructor.
  *
  * If you hit this exception, you probably got a programming error.
@@ -297,7 +297,7 @@ struct invalid_priority: public std::invalid_argument, public exception
 //@}
 
 
-/// Miscelaneous constants
+/// Miscellaneous constants
 enum
 {
 	DEFAULT_PRIORITY = -1,      ///< Default priority (the middle value).
@@ -474,7 +474,7 @@ struct basic_event: internal::event
 /**
  * Generic event object.
  *
- * This object stores all the information about an event, incluiding a callback
+ * This object stores all the information about an event, including a callback
  * functor, which is called when the event is fired. The template parameter
  * must be a functor (callable object or function) that can take 2 parameters:
  * an integer (the file descriptor of the fired event) and an event::type (the
@@ -614,7 +614,7 @@ struct signal: event< F >
 {
 
 	/**
-	 * Creates a new singal event.
+	 * Creates a new signal event.
 	 *
 	 * @param signum Signal number to monitor.
 	 * @param handler Callback functor.
@@ -689,7 +689,7 @@ typedef eventxx::signal< ccallback_type > csignal;
 /**
  * Event dispatcher.
  *
- * This class is the responsable for looping and dispatching events. Everytime
+ * This class is the responsible for looping and dispatching events. Every time
  * you need an event loop you should create an instance of this class.
  *
  * You can @link dispatcher::add add @endlink events to the dispatcher, and you
