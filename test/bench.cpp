@@ -30,7 +30,7 @@
  *     Added chain event propagation to improve the sensitivity of
  *     the measure respect to the event loop efficency.
  *
- * Wed 2006-12-27 - Modified by Leandro Lucarella <llucarella@integratech.com.ar>
+ * Wed 2006-12-27 - Modified by Leandro Lucarella <llucax+eventxx@gmail.com>
  *
  *     Adapted to test the C++ inteface.
  *
