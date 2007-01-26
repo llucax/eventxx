@@ -2,13 +2,11 @@
 #include <iostream>
 #include <csignal>
 
-using eventxx::dispatcher;
-
 struct handler
 {
-	dispatcher& d;
+	eventxx::dispatcher& d;
 	int i;
-	handler(dispatcher& d): d(d), i(0) {}
+	handler(eventxx::dispatcher& d): d(d), i(0) {}
 	void operator() (int signum, short event)
 	{
 		if (i < 5) std::cout << "keep going...\n";
@@ -28,7 +26,7 @@ void sighandler(int signum, short event, void* data)
 
 int main()
 {
-	dispatcher d;
+	eventxx::dispatcher d;
 	handler h(d);
 	eventxx::csignal sigev(SIGINT, sighandler, &h.i);
 	eventxx::signal< handler > e(SIGINT, h);
