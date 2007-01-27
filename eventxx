@@ -32,8 +32,9 @@
  * file to your project and you are set.
  *
  * It's designed to be as close to use to libevent (without compromising modern
- * C++ programming techniques) and efficiency (since all implementation is
- * trivial and inline, theoretically, it imposes no overhead at all).
+ * C++ programming techniques) and efficient (since all implementation is
+ * trivial and inline, theoretically, it imposes no overhead at all) as
+ * possible.
  *
  * Please, visit the <a href="http://www.llucax.com.ar/~luca/eventxx/">eventxx
  * website</a> for the latest documentation.
