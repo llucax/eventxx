@@ -56,14 +56,14 @@
  * main difference to libevent is you always have to instance a
  * eventxx::dispatcher to get an event loop. There is no implicit global event
  * loop. This adds just an extra line of code for single threaded applications
- * and makes things much more simple, so I hope nobody complains about it ;).
+ * and makes things much more simpler, so I hope nobody complains about it ;).
  * See eventxx::dispatcher documentation for more details.
  *
  * You can use use the same plain functions callbacks @libevent use or the other
  * kind of function objects (see @ref events section for details on event
  * types).
  *
- * @eventxx uses @ref exceptions to report errors. All functions has exception
+ * @eventxx uses @ref exceptions to report errors. All functions have exception
  * specifications, so it's easy to find out what to expect. See @ref exceptions
  * section for more detail.
  *
@@ -78,8 +78,8 @@
  *
  * Maybe you shouldn't know this implementation details to keep the abstraction,
  * but this is a basic design goal of this wrapper so there is not much chance
- * that this changes in the future (but use this knowledge with care, you are
- * warned ;).
+ * that this changes in the future (but use this knowledge with care, you have
+ * been  warned ;).
  *
  *
  * @section Example
@@ -124,32 +124,31 @@
  * }
  * @endcode
  *
- * You can see some more examples on the test directory of the distribution or
- * on the examples related page.
+ * You can see more examples on the test directory of the distribution or on the
+ * examples related page.
  *
  *
  * @section Status
  *
- * This library was not widely used yet, it lack some testing. Because templates
- * are not even compiled when they are not used, don't be surprised if you catch
- * a piece of code that don't even compiled yet because the lack of testing. The
- * library has no support for buffered events yet either. It doesn't support the
- * http stuff, and probably never will because that has nothing to do with event
- * handling.
+ * This library has not been widely used yet, so it lacks proper testing.
+ * Because templates are not even compiled when they are not used, don't have to
+ * be surprised if you catch a piece of code that doesn't compile. The library
+ * has no support for buffered events yet. It doesn't support the HTTP stuff,
+ * and probably never will because that has nothing to do with event handling.
  *
  * If you notice that when using @eventxx your program leaks some memory, don't
  * blame me, blame @libevent :) @libevent has a known bug on @c event_base_free()
- * that makes it assert always, so @c event_base_free() it's unusable, unless you
+ * that makes it assert always, so @c event_base_free() is unusable, unless you
  * patch your libevent (for example, using this <a
  * href="http://monkeymail.org/archives/libevent-users/2006-April/000141.html">patch</a>
- * written by Mark D. Anderson, and who knows why it's not still applied. If you
- * do so, you can compile your programs with @c -DEVENT_BASE_FREE_FIX so
+ * written by Mark D. Anderson, and who knows why it's not still applied). If
+ * you do so, you can compile your programs with @c -DEVENT_BASE_FREE_FIX so
  * @c event_base_free() gets called in the eventxx::dispatcher @link
  * eventxx::dispatcher::~dispatcher() destructor @endlink.
  *
  * That said, I think it's still pretty usable anyways. If something is broken
- * it would be really easy to fix it because is just a simple wrapper around
- * @libevent. So, please try it out, and if you have any problems,
+ * it would be really easy to fix because @eventxx is just a simple wrapper
+ * around @libevent. So, please try it out, and if you have any problems,
  * <a href="mailto:llucax+eventxx@gmail.com">drop me an
  * e-mail</a> and and I'll fix it ASAP (or provide a patch and you will be my
  * best friend ;).
