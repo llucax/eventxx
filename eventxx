@@ -920,10 +920,12 @@ struct dispatcher
 	 *              processed, if eventxx::NONBLOCK is specified, then this
 	 *              function returns even if there are no pending events.
 	 *
-	 * @return Not very well specified by @libevent :-/ that's why it
-	 *         doesn't throw an exception either.
+	 * @return 0 if eventxx::NONBLOCK or eventxx::ONCE is set, 1 if there
+	 *         are no more events registered and EINTR if you use the
+	 *         @libevent's  @c event_gotsig and return -1 in your
+	 *         @c event_sigcb callback.
 	 */
-	int dispatch(int flags = 0) throw() // TODO  throw(exception)
+	int dispatch(int flags = 0) throw()
 	{
 		return internal::event_base_loop(_event_base, flags);
 	}
