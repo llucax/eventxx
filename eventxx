@@ -9,35 +9,24 @@
  *
  * @section Introduction
  *
- * The <a href="http://monkey.org/~provos/libevent/">libevent</a> API provides
- * a mechanism to execute a callback function when a specific event occurs on
- * a file descriptor or after a timeout has been reached. Furthermore, libevent
- * also support callbacks due to signals or regular timeouts.
+ * @libevent is a popular API that provides a mechanism to execute a callback
+ * function when a specific event occurs on a file descriptor or after a
+ * timeout has been reached. Furthermore, @libevent also support callbacks due
+ * to signals or regular timeouts.
  *
- * libevent is meant to replace the event loop found in event driven network
- * servers. An application just needs to call dispatcher::dispatch() and then
- * add or remove events dynamically without having to change the event loop.
+ * @eventxx is a simple, direct, one-header inline C++ wrapper for @libevent.
+ * Yes, it's just one header file, so if you want to use it you can just copy
+ * the file to your project and you are set (well, you'll need to link to
+ * @libevent too ;). I know @eventxx will work with @libevent 1.1 and 1.2 if you
+ * use the @c event_base_free() fix (see \ref Status section for more details).
  *
- * Currently, libevent supports /dev/poll, kqueue(2), select(2), poll(2) and
- * epoll(4). It also has experimental support for real-time signals. The
- * internal event mechanism is completely independent of the exposed event API,
- * and a simple update of libevent can provide new functionality without having
- * to redesign the applications. As a result, Libevent allows for portable
- * application development and provides the most scalable event notification
- * mechanism available on an operating system. Libevent should compile on Linux,
- * *BSD, Mac OS X, Solaris and Windows.
- *
- * This is a simple, direct, one-header inline C++ wrapper for libevent. Yes,
- * it's just one header file, so if you want to use it you can just copy the
- * file to your project and you are set.
- *
- * It's designed to be as close to use to libevent (without compromising modern
- * C++ programming techniques) and efficient (since all implementation is
- * trivial and inline, theoretically, it imposes no overhead at all) as
+ * It's designed to be as close to use to @libevent (without compromising
+ * modern C++ programming techniques) and efficient (since all implementation
+ * is trivial and inline, theoretically, it imposes no overhead at all) as
  * possible.
  *
- * Please, visit the <a href="http://www.llucax.com.ar/~luca/eventxx/">eventxx
- * website</a> for the latest documentation.
+ * Please, visit the @eventxx website for the latest version of this
+ * documentation.
  *
  * You can always get the <a
  * href="http://www.llucax.com.ar/~luca/eventxx/releases/eventxx.tar.gz">current
@@ -57,35 +46,41 @@
  *
  * @section Usage
  *
- * This wrapper was designed to be used just like libevent, but with C++ style
+ * You probably should read @libevent documentation to get started or at least
+ * just for reference, although @eventxx is pretty simple so you can jump right
+ * into the \ref Example section (or the example list) and write a working
+ * program without much trouble.
+ *
+ * This wrapper was designed to be used just like @libevent, but with C++ style
  * syntax sugar (or poison, depends on your point of view ;) and goodies. The
  * main difference to libevent is you always have to instance a
  * eventxx::dispatcher to get an event loop. There is no implicit global event
  * loop. This adds just an extra line of code for single threaded applications
- * and makes things much more simple. See eventxx::dispatcher documentation for
- * more details.
+ * and makes things much more simple, so I hope nobody complains about it ;).
+ * See eventxx::dispatcher documentation for more details.
  *
- * You can use use the same plain functions callbacks or the other kind of
- * function objects (see @link events @endlink section for details on event
+ * You can use use the same plain functions callbacks @libevent use or the other
+ * kind of function objects (see @ref events section for details on event
  * types).
  *
- * eventxx uses @link exceptions @endlink to report errors. All functions has
- * exception specifications, so it's easy to find out what to expect. See
- * exceptions section for more detail.
+ * @eventxx uses @ref exceptions to report errors. All functions has exception
+ * specifications, so it's easy to find out what to expect. See @ref exceptions
+ * section for more detail.
  *
- * A timespec abstraction is provided in eventxx::time for convenient argument
- * passing. Even more, it's a timespec itself, with some convenient methods for
- * accessing the timespec attributes in a more C++ way. And even more, eventxx
- * is such a direct mapping that all eventxx::event's are libevent event structs
- * too, so theoretically you can pass a eventxx::event to libevent C functions
- * without much trouble. eventxx::dispatcher is the only class that is not
- * derived from libevent struct (event_base) because this struct it's not
- * defined on the libevent header (just declared).
+ * A @c timespec abstraction is provided as eventxx::time for convenient
+ * argument passing. Even more, it's a @c timespec itself, with some convenient
+ * methods for accessing the attributes with pritier names. And even more,
+ * @eventxx is such a direct mapping that all eventxx::event's are @libevent
+ * event structs too, so theoretically you can pass a eventxx::event to
+ * @libevent C functions without much trouble. eventxx::dispatcher is the only
+ * class that is not derived from @libevent struct (@c event_base) because this
+ * struct it's not defined on the libevent header (just declared).
  *
  * Maybe you shouldn't know this implementation details to keep the abstraction,
  * but this is a basic design goal of this wrapper so there is not much chance
  * that this changes in the future (but use this knowledge with care, you are
  * warned ;).
+ *
  *
  * @section Example
  *
@@ -136,24 +131,25 @@
  * @section Status
  *
  * This library was not widely used yet, it lack some testing. Because templates
- * are not even compiled when they are used, you can't be surprised if you catch
- * a piece of code that didn't got even compiled yet because the lack of
- * testing. The library has no support for buffered events yet either. It
- * doesn't support the http stuff, and probably never will because that has
- * nothing to do with event handling.
+ * are not even compiled when they are not used, don't be surprised if you catch
+ * a piece of code that don't even compiled yet because the lack of testing. The
+ * library has no support for buffered events yet either. It doesn't support the
+ * http stuff, and probably never will because that has nothing to do with event
+ * handling.
  *
- * If you notice this lib leaks memory, don't blame me, blame libevent :)
- * libevent has a known bug on event_base_free() that makes it assert always, so
- * event_base_free() it's unusable, unless you patch your libevent (for example,
- * using this <a
+ * If you notice that when using @eventxx your program leaks some memory, don't
+ * blame me, blame @libevent :) @libevent has a known bug on @c event_base_free()
+ * that makes it assert always, so @c event_base_free() it's unusable, unless you
+ * patch your libevent (for example, using this <a
  * href="http://monkeymail.org/archives/libevent-users/2006-April/000141.html">patch</a>
- * written by Mark D. Anderson and who knows why it's not still applied. If you
- * do so, you can compile your programs with -DEVENT_BASE_FREE_FIX so
- * event_base_free() gets called.
+ * written by Mark D. Anderson, and who knows why it's not still applied. If you
+ * do so, you can compile your programs with @c -DEVENT_BASE_FREE_FIX so
+ * @c event_base_free() gets called in the eventxx::dispatcher @link
+ * eventxx::dispatcher::~dispatcher() destructor @endlink.
  *
- * That said, I think it's pretty usable anyways. If something is broken it
- * would be really easy to fix it because is just a simple wrapper around
- * libevent. So, please try it out, and if you have any problems,
+ * That said, I think it's still pretty usable anyways. If something is broken
+ * it would be really easy to fix it because is just a simple wrapper around
+ * @libevent. So, please try it out, and if you have any problems,
  * <a href="mailto:llucax+eventxx@gmail.com">drop me an
  * e-mail</a> and and I'll fix it ASAP (or provide a patch and you will be my
  * best friend ;).
@@ -167,9 +163,9 @@
  *
  * @par License
  * This program is under the BOLA license (see
- * http://auriga.wearlab.de/~alb/bola/ for more info or the
+ * http://auriga.wearlab.de/~alb/bola/ for more details or read the
  * <a href="http://www.llucax.com.ar/~luca/repos/eventxx/LICENSE">LICENSE</a>
- * file itself).
+ * file itself, it's very short and it basically says it's Public Domain).
  *
  */
 
@@ -492,8 +488,8 @@ struct basic_event: internal::event
  * an integer (the file descriptor of the fired event) and an event::type (the
  * type of event being fired).
  * There is a specialized version of this class which takes as the template
- * parameter a C function with the ccallback_type signature, just like C
- * libevent API does.
+ * parameter a C function with the eventxx::ccallback_type signature, just like
+ * C @libevent API does.
  *
  * @see eventxx::event< ccallback_type >
  */
@@ -739,6 +735,7 @@ struct dispatcher
 	}
 
 #ifdef EVENT_BASE_FREE_FIX
+	/// Free dispatcher resources, see @ref Status section for details.
 	~dispatcher() throw() { event_base_free(_event_base); }
 #else
 #warning "The dispatcher class *will* leak memory because of a libevent bug, see http://www.mail-archive.com/libevent-users@monkey.org/msg00110.html for more info an a patch. If you already have this patch, please -DEVENT_BASE_FREE_FIX to your compiler to make this message disappear and really free the dispatcher memory using event_base_free()."
