@@ -540,7 +540,7 @@ struct event< ccallback_type >: basic_event
 	 * @param handler C-style callback function.
 	 * @param arg Arbitrary pointer to pass to the handler as argument.
 	 */
-	event(int fd, short ev, ccallback_type handler, void* arg) throw()
+	event(int fd, short ev, ccallback_type handler, void* arg = 0) throw()
 	{
 		event_set(this, fd, ev, handler, arg);
 	}
@@ -597,7 +597,7 @@ struct timer< ccallback_type >: event< ccallback_type >
 	 * @param handler C-style callback function.
 	 * @param arg Arbitrary pointer to pass to the handler as argument.
 	 */
-	timer(ccallback_type handler, void* arg) throw()
+	timer(ccallback_type handler, void* arg = 0) throw()
 	{
 		evtimer_set(this, handler, arg);
 	}
@@ -663,7 +663,7 @@ struct signal< ccallback_type >: event< ccallback_type >
 	 * @param handler C-style callback function.
 	 * @param arg Arbitrary pointer to pass to the handler as argument.
 	 */
-	signal(int signum, ccallback_type handler, void* arg) throw()
+	signal(int signum, ccallback_type handler, void* arg = 0) throw()
 	{
 		signal_set(this, signum, handler, arg);
 	}
