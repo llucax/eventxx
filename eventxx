@@ -718,7 +718,8 @@ struct dispatcher
 	 */
 	dispatcher() throw()
 	{
-		_event_base = static_cast< internal::event_base* >(internal::event_init());
+		_event_base = static_cast< internal::event_base* >(
+				internal::event_init());
 	}
 
 	/**
@@ -728,7 +729,8 @@ struct dispatcher
 	 */
 	dispatcher(int npriorities) throw(std::bad_alloc)
 	{
-		_event_base = static_cast< internal::event_base* >(internal::event_init());
+		_event_base = static_cast< internal::event_base* >(
+				internal::event_init());
 		if (!_event_base) throw std::bad_alloc();
 		// Can't fail because there is no way that it has active events
 		internal::event_base_priority_init(_event_base, npriorities);
@@ -738,7 +740,11 @@ struct dispatcher
 	/// Free dispatcher resources, see @ref Status section for details.
 	~dispatcher() throw() { event_base_free(_event_base); }
 #else
-#warning "The dispatcher class *will* leak memory because of a libevent bug, see http://www.mail-archive.com/libevent-users@monkey.org/msg00110.html for more info an a patch. If you already have this patch, please -DEVENT_BASE_FREE_FIX to your compiler to make this message disappear and really free the dispatcher memory using event_base_free()."
+#warning "The dispatcher class *will* leak memory because of a libevent bug, " \
+    "see http://www.mail-archive.com/libevent-users@monkey.org/msg00110.html " \
+    "for more info an a patch. If you already have this patch, please " \
+    "-DEVENT_BASE_FREE_FIX to your compiler to make this message disappear " \
+    "and really free the dispatcher memory using event_base_free()."
 #endif
 
 	/**
@@ -775,7 +781,8 @@ struct dispatcher
 		if (priority != DEFAULT_PRIORITY
 				&& internal::event_priority_set(&e, priority))
 			throw invalid_priority();
-		internal::event_add(&e, const_cast< time* >(&to)); // XXX HACK libevent don't use const
+		// XXX HACK libevent don't use const
+		internal::event_add(&e, const_cast< time* >(&to)); 
 	}
 
 	/**
@@ -827,7 +834,8 @@ struct dispatcher
 	{
 		internal::event_once(fd, ev, &dispatcher::wrapper< F >,
 				reinterpret_cast< void* >(&handler),
-				const_cast< time* >(&to)); // XXX HACK libevent don't use const
+				// XXX HACK libevent don't use const
+				const_cast< time* >(&to));
 	}
 
 	/**
@@ -842,9 +850,12 @@ struct dispatcher
 	 * @param arg Arbitrary pointer to pass to the handler as argument.
 	 * @param to Timeout.
 	 */
-	void add_once(int fd, type ev, ccallback_type handler, void* arg, const time& to)
+	void add_once(int fd, type ev, ccallback_type handler, void* arg,
+			const time& to)
 	{
-		internal::event_once(fd, ev, handler, arg, const_cast< time* >(&to)); // XXX HACK libevent don't use const
+		internal::event_once(fd, ev, handler, arg,
+				// XXX HACK libevent don't use const
+				const_cast< time* >(&to));
 	}
 
 	/**
@@ -861,7 +872,8 @@ struct dispatcher
 	{
 		internal::event_once(-1, EV_TIMEOUT, &dispatcher::wrapper< F >,
 				reinterpret_cast< void* >(&handler),
-				const_cast< time* >(&to)); // XXX HACK libevent don't use const
+				// XXX HACK libevent don't use const
+				const_cast< time* >(&to));
 	}
 
 	/**
@@ -876,7 +888,9 @@ struct dispatcher
 	 */
 	void add_once_timer(ccallback_type handler, void* arg, const time& to)
 	{
-		internal::event_once(-1, EV_TIMEOUT, handler, arg, const_cast< time* >(&to)); // XXX HACK libevent don't use const
+		// XXX HACK libevent don't use const
+		internal::event_once(-1, EV_TIMEOUT, handler, arg,
+				const_cast< time* >(&to));
 	}
 
 	/**
