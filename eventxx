@@ -781,7 +781,7 @@ struct dispatcher
 				&& internal::event_priority_set(&e, priority))
 			throw invalid_priority();
 		// XXX HACK libevent don't use const
-		internal::event_add(&e, const_cast< time* >(&to)); 
+		internal::event_add(&e, const_cast< time* >(&to));
 	}
 
 	/**
