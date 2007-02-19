@@ -131,8 +131,8 @@
  * @section Status
  *
  * This library has not been widely used yet, so it lacks proper testing.
- * Because templates are not even compiled when they are not used, don't have to
- * be surprised if you catch a piece of code that doesn't compile. The library
+ * Because templates are not even compiled when they are not used, don't be
+ * surprised if you catch a piece of code that doesn't compile. The library
  * has no support for buffered events yet. It doesn't support the HTTP stuff,
  * and probably never will because that has nothing to do with event handling.
  *
