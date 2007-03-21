@@ -180,6 +180,12 @@
  * callbacks.
  */
 
+/** @example wrapped-functor-way.cpp
+ *
+ * This is a simple example illustrating the usage with an arbitrary member
+ * function as an event handler callbacks.
+ */
+
 /** @example mixed-way.cpp
  *
  * This is a simple example illustrating the usage with a mix of C-like callbacks
@@ -372,6 +378,9 @@ struct time: ::timeval
  * eventxx::csignal) like in C or the other kind of more advanced, stateful
  * function objects (see eventxx::event, eventxx::timer and eventxx::signal
  * templates). The former are just typedef'ed specialization of the later.
+ *
+ * A member function wrapper functor (eventxx::mem_cb) is also included,
+ * so you can use any member function (method) as an event handler.
  *
  * All events derive from a plain class (not template) eventxx::basic_event, one
  * of the main utilities of it (besides containing common code ;) is to be used
@@ -689,6 +698,38 @@ typedef eventxx::timer< ccallback_type > ctimer;
 /// Shortcut to C-style signal handler.
 typedef eventxx::signal< ccallback_type > csignal;
 
+/**
+ * Helper functor to use an arbitrary member function as an event handler.
+ *
+ * With this wrapper, you can use any object method, which accepts the right
+ * parameters (int, short) and returns void, as an event handler. This way you
+ * don't have to overload the operator() which can be confusing depending on the
+ * context.
+ *
+ * You can see an usage example in the Examples Section.
+ */
+template < typename O, typename M >
+struct mem_cb
+{
+	/**
+	 * Member function callback constructor.
+	 *
+	 * It expects to receive a class as the first parameter (O), and a
+	 * member function (of that class O) as the second parameter.
+	 *
+	 * When this instance is called with fd and ev as function arguments,
+	 * object.method(fd, ev) will be called.
+	 *
+	 * @param object Object to be used.
+	 * @param method Method to be called.
+	 */
+	mem_cb(O& object, M method) throw():
+		_object(object), _method(method) {}
+	void operator() (int fd, short ev) { (_object.*_method)(fd, ev); }
+	protected:
+		O& _object;
+		M _method;
+}; // struct mem_cb
 
 //@}
 
@@ -957,8 +998,7 @@ struct dispatcher
 
 }; // struct dispatcher
 
-
-} // namespace event
+} // namespace eventxx
 
 #endif // _EVENTXX_HPP_
 
