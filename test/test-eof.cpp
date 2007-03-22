@@ -60,7 +60,7 @@ main (int argc, char **argv)
 	shutdown(pair[0], SHUT_WR);
 
 	/* Initalize one event */
-	ev = new eventxx::cevent(pair[1], EV_READ, read_cb, NULL);
+	ev = new eventxx::cevent(pair[1], eventxx::READ, read_cb, NULL);
 
 	d.add(*ev);
 

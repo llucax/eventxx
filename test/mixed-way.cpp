@@ -7,7 +7,7 @@ struct handler
 	eventxx::dispatcher& d;
 	int i;
 	handler(eventxx::dispatcher& d): d(d), i(0) {}
-	void operator() (int signum, short event)
+	void operator() (int signum, eventxx::type event)
 	{
 		if (i < 5) std::cout << "keep going...\n";
 		else

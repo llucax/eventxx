@@ -9,7 +9,7 @@ struct handler
 	dispatcher& d;
 	int i;
 	handler(dispatcher& d): d(d), i(0) {}
-	void handle_event(int signum, short event)
+	void handle_event(int signum, eventxx::type event)
 	{
 		std::cout << ++i << " interrupts, ";
 		if (i < 5) std::cout << "keep going...\n";
@@ -21,7 +21,7 @@ struct handler
 	}
 };
 
-typedef eventxx::mem_cb< handler, void (handler::*)(int, short) > cb_type;
+typedef eventxx::mem_cb< handler, void (handler::*)(int, eventxx::type) > cb_type;
 
 int main()
 {

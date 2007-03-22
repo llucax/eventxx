@@ -94,7 +94,7 @@
  * 	eventxx::dispatcher& d;
  * 	int i;
  * 	handler(eventxx::dispatcher& d): d(d), i(0) {}
- * 	void operator() (int signum, short event)
+ * 	void operator() (int signum, eventxx::type event)
  * 	{
  * 		if (i < 5) std::cout << "keep going...\n";
  * 		else
@@ -378,6 +378,9 @@ struct time: ::timeval
  * A member function wrapper functor (eventxx::mem_cb) is also included,
  * so you can use any member function (method) as an event handler.
  *
+ * Please note that C-like function callback take a short as the type of event,
+ * while functors (or member functions) use eventxx::type.
+ *
  * All events derive from a plain class (not template) eventxx::basic_event, one
  * of the main utilities of it (besides containing common code ;) is to be used
  * in STL containers.
@@ -520,9 +523,9 @@ struct event: basic_event
 	 * @param ev Type of events to monitor (see eventxx::type).
 	 * @param handler Callback functor.
 	 */
-	event(int fd, short ev, F& handler) throw()
+	event(int fd, type ev, F& handler) throw()
 	{
-		event_set(this, fd, ev, &wrapper,
+		event_set(this, fd, static_cast< short >(ev), &wrapper,
 				reinterpret_cast< void* >(&handler));
 	}
 
@@ -556,9 +559,9 @@ struct event< ccallback_type >: basic_event
 	 * @param handler C-style callback function.
 	 * @param arg Arbitrary pointer to pass to the handler as argument.
 	 */
-	event(int fd, short ev, ccallback_type handler, void* arg = 0) throw()
+	event(int fd, type ev, ccallback_type handler, void* arg = 0) throw()
 	{
-		event_set(this, fd, ev, handler, arg);
+		event_set(this, fd, static_cast< short >(ev), handler, arg);
 	}
 
 	protected:
@@ -719,6 +722,7 @@ typedef eventxx::signal< ccallback_type > csignal;
 template < typename O, typename M >
 struct mem_cb
 {
+
 	/**
 	 * Member function callback constructor.
 	 *
@@ -733,10 +737,12 @@ struct mem_cb
 	 */
 	mem_cb(O& object, M method) throw():
 		_object(object), _method(method) {}
-	void operator() (int fd, short ev) { (_object.*_method)(fd, ev); }
+
+	void operator() (int fd, type ev) { (_object.*_method)(fd, ev); }
 	protected:
 		O& _object;
 		M _method;
+
 }; // struct mem_cb
 
 //@}
@@ -846,8 +852,9 @@ struct dispatcher
 	template < typename F >
 	void add_once(int fd, type ev, F& handler)
 	{
-		internal::event_once(fd, ev, &dispatcher::wrapper< F >,
-				reinterpret_cast< void* >(&handler), 0);
+		internal::event_once(fd, static_cast< short>(ev),
+			&dispatcher::wrapper< F >,
+			reinterpret_cast< void* >(&handler), 0);
 	}
 
 	/**
@@ -863,7 +870,8 @@ struct dispatcher
 	 */
 	void add_once(int fd, type ev, ccallback_type handler, void* arg)
 	{
-		internal::event_once(fd, ev, handler, arg, 0);
+		internal::event_once(fd, static_cast< short >(ev), handler,
+			arg, 0);
 	}
 
 	/**
@@ -880,10 +888,11 @@ struct dispatcher
 	template < typename F >
 	void add_once(int fd, type ev, F& handler, const time& to)
 	{
-		internal::event_once(fd, ev, &dispatcher::wrapper< F >,
-				reinterpret_cast< void* >(&handler),
-				// XXX HACK libevent don't use const
-				const_cast< time* >(&to));
+		internal::event_once(fd, static_cast< short >(ev),
+			&dispatcher::wrapper< F >,
+			reinterpret_cast< void* >(&handler),
+			// XXX HACK libevent don't use const
+			const_cast< time* >(&to));
 	}
 
 	/**
@@ -901,7 +910,7 @@ struct dispatcher
 	void add_once(int fd, type ev, ccallback_type handler, void* arg,
 			const time& to)
 	{
-		internal::event_once(fd, ev, handler, arg,
+		internal::event_once(fd, static_cast< short >(ev), handler, arg,
 				// XXX HACK libevent don't use const
 				const_cast< time* >(&to));
 	}

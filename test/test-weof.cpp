@@ -61,7 +61,7 @@ main (int argc, char **argv)
 		return (1);
 
 	/* Initalize one event */
-	ev = new eventxx::event< cb_t >(pair[1], EV_WRITE, write_cb);
+	ev = new eventxx::event< cb_t >(pair[1], eventxx::WRITE, write_cb);
 
 	d.add(*ev);
 
