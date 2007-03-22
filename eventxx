@@ -319,10 +319,6 @@ enum
 };
 
 
-/// C function used as callback in the C API.
-typedef void (*ccallback_type)(int, short, void*);
-
-
 /**
  * Time used for timeout values.
  *
@@ -389,6 +385,11 @@ struct time: ::timeval
  * Please see each class documentation for details and examples.
  */
 //@{
+
+
+/// C function used as callback in the C API.
+typedef void (*ccallback_type)(int, short, void*);
+
 
 /**
  * Type of events.
