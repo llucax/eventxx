@@ -410,6 +410,13 @@ enum type
 	PERSIST = EV_PERSIST  ///< Not really an event, is an event modifier.
 };
 
+type operator| (const type& t1, const type& t2)
+{
+	int r = t1 | t2;
+	return *reinterpret_cast< type* >(&r);
+}
+
+
 /**
  * Basic event from which all events derive.
  *
