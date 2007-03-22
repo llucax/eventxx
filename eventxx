@@ -1007,7 +1007,7 @@ struct dispatcher
 	protected:
 		internal::event_base* _event_base;
 		template < typename F >
-		static void wrapper(int fd, type ev, void* h)
+		static void wrapper(int fd, short ev, void* h)
 		{
 			F& handler = *reinterpret_cast< F* >(h);
 			handler(fd, *reinterpret_cast< type* >(&ev));
