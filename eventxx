@@ -796,11 +796,11 @@ struct dispatcher
 	~dispatcher() throw() { event_base_free(_event_base); }
 #else
 #ifndef EVENTXX_NO_WARNING
-#warning "The dispatcher class *will* leak memory because of a libevent bug, " \
-    "see http://www.mail-archive.com/libevent-users@monkey.org/msg00110.html " \
-    "for more info an a patch. If you already have this patch, please " \
-    "-DEVENTXX_EVENT_BASE_FREE_FIX to your compiler to make this message disappear " \
-    "and really free the dispatcher memory using event_base_free()."
+#warning "The dispatcher class *will* leak memory because of a libevent bug, \
+see http://www.mail-archive.com/libevent-users@monkey.org/msg00110.html \
+for more info an a patch. If you already have this patch, please \
+-DEVENTXX_EVENT_BASE_FREE_FIX to your compiler to make this message disappear \
+and really free the dispatcher memory using event_base_free()."
 #endif
 #endif
 
