@@ -142,8 +142,8 @@
  * patch your libevent (for example, using this <a
  * href="http://monkeymail.org/archives/libevent-users/2006-April/000141.html">patch</a>
  * written by Mark D. Anderson, and who knows why it's not still applied). If
- * you do so, you can compile your programs with @c -DEVENT_BASE_FREE_FIX so
- * @c event_base_free() gets called in the eventxx::dispatcher @link
+ * you do so, you can compile your programs with @c -DEVENTXX_EVENT_BASE_FREE_FIX
+ * so @c event_base_free() gets called in the eventxx::dispatcher @link
  * eventxx::dispatcher::~dispatcher() destructor @endlink.
  *
  * That said, I think it's still pretty usable anyways. If something is broken
@@ -791,14 +791,14 @@ struct dispatcher
 		internal::event_base_priority_init(_event_base, npriorities);
 	}
 
-#ifdef EVENT_BASE_FREE_FIX
+#ifdef EVENTXX_BASE_FREE_FIX
 	/// Free dispatcher resources, see @ref Status section for details.
 	~dispatcher() throw() { event_base_free(_event_base); }
 #else
 #warning "The dispatcher class *will* leak memory because of a libevent bug, " \
     "see http://www.mail-archive.com/libevent-users@monkey.org/msg00110.html " \
     "for more info an a patch. If you already have this patch, please " \
-    "-DEVENT_BASE_FREE_FIX to your compiler to make this message disappear " \
+    "-DEVENTXX_EVENT_BASE_FREE_FIX to your compiler to make this message disappear " \
     "and really free the dispatcher memory using event_base_free()."
 #endif
 
