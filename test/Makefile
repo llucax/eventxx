@@ -15,6 +15,17 @@ targets=bench test-eof test-time test-weof trivial c-way functor-way \
 
 all: $(targets)
 
+test: all
+	@echo Running tests...
+	@echo
+	@for f in $(targets); do \
+		echo -------------------------------------------------------; \
+		echo runnig $$f; \
+		echo -------------------------------------------------------; \
+		./$$f; \
+		echo; \
+	done
+
 clean:
 	$(RM) -fv *.o $(targets)
 
