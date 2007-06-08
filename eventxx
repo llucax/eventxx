@@ -136,16 +136,13 @@
  * HTTP stuff, and probably never will because that has nothing to do with
  * event handling.
  *
- * If you notice that when using @eventxx your program leaks some memory, don't
- * blame me, blame @libevent :) @libevent has a known bug on @c event_base_free()
- * that makes it assert always, so @c event_base_free() is unusable, unless you
- * patch your libevent (for example, using this <a
- * href="http://monkeymail.org/archives/libevent-users/2006-April/000141.html">patch</a>
- * written by Mark D. Anderson, and who knows why it's not still applied). If
- * you do so, you can compile your programs with
- * @c -DEVENTXX_BASE_FREE_FIX so @c event_base_free() gets called in the
- * eventxx::dispatcher @link eventxx::dispatcher::~dispatcher() destructor
- * @endlink.
+ * @libevent had a memory leak before version 1.3b (before 1.2 it didn't even
+ * had a way free that memory, from version 1.2 to 1.3a, if you tried to free the
+ * memory the program abort() because a failed assertion). Because of that,
+ * there is a way to disable the @link eventxx::dispatcher::~dispatcher()
+ * destructor @endlink (which calls the inexistent/broken @c event_base_free()
+ * function). So if you use a @libevent version previous to 1.3b, you have to
+ * compile your programs defining the EVENTXX_NO_EVENT_BASE_FREE macro.
  *
  * If something is broken it would be really easy to fix because @eventxx is
  * just a simple wrapper around @libevent. So, please try it out, and if you
@@ -789,17 +786,9 @@ struct dispatcher
 		internal::event_base_priority_init(_event_base, npriorities);
 	}
 
-#ifdef EVENTXX_BASE_FREE_FIX
+#ifndef EVENTXX_NO_EVENT_BASE_FREE
 	/// Free dispatcher resources, see @ref Status section for details.
 	~dispatcher() throw() { event_base_free(_event_base); }
-#else
-#ifndef EVENTXX_NO_WARNING
-#warning "The dispatcher class *will* leak memory because of a libevent bug, \
-see http://www.mail-archive.com/libevent-users@monkey.org/msg00110.html \
-for more info an a patch. If you already have this patch, please \
--DEVENTXX_BASE_FREE_FIX to your compiler to make this message disappear \
-and really free the dispatcher memory using event_base_free()."
-#endif
 #endif
 
 	/**

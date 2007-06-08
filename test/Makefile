@@ -1,12 +1,8 @@
 
 CXXFLAGS=-I.. -g -Wall
 
-# Uncomment this if you have a fixed event_base_free().
-# See http://www.mail-archive.com/libevent-users@monkey.org/msg00112.html
-#CXXFLAGS+=-DEVENTXX_BASE_FREE_FIX
-
-# Don't warn me about memory leaks
-CXXFLAGS+=-DEVENTXX_NO_WARNING
+# Uncomment this if you have a libevent version previous to 1.3b.
+#CXXFLAGS+=-DEVENTXX_NO_EVENT_BASE_FREE
 
 LDFLAGS=-levent
 
