@@ -17,8 +17,7 @@
  * @eventxx is a simple, direct, one-header inline C++ wrapper for @libevent.
  * Yes, it's just one header file, so if you want to use it you can just copy
  * the file to your project and you are set (well, you'll need to link to
- * @libevent too ;). I know @eventxx will work with @libevent 1.1 and 1.2 if you
- * use the @c event_base_free() fix (see \ref Status section for more details).
+ * @libevent too ;).
  *
  * It's designed to be as close to use to @libevent (without compromising
  * modern C++ programming techniques) and efficient (since all implementation
