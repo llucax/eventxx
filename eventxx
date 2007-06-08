@@ -136,12 +136,13 @@
  * event handling.
  *
  * @libevent had a memory leak before version 1.3b (before 1.2 it didn't even
- * had a way free that memory, from version 1.2 to 1.3a, if you tried to free the
- * memory the program abort() because a failed assertion). Because of that,
- * there is a way to disable the @link eventxx::dispatcher::~dispatcher()
- * destructor @endlink (which calls the inexistent/broken @c event_base_free()
- * function). So if you use a @libevent version previous to 1.3b, you have to
- * compile your programs defining the EVENTXX_NO_EVENT_BASE_FREE macro.
+ * had a way free that memory, from version 1.2 to 1.3a, if you tried to free
+ * the memory the program @c abort() because a failed assertion). Because of
+ * that, there is a way to disable the @link eventxx::dispatcher::~dispatcher()
+ * dispatcher destructor @endlink (which calls the inexistent/broken
+ * @c event_base_free() function). So if you use a @libevent version previous
+ * to 1.3b, you have to compile your programs defining the
+ * @c EVENTXX_NO_EVENT_BASE_FREE macro.
  *
  * If something is broken it would be really easy to fix because @eventxx is
  * just a simple wrapper around @libevent. So, please try it out, and if you
