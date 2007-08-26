@@ -1,0 +1,210 @@
+// NOTE: This file is in doxygen[1] format. Maybe you should try to run
+//       doxygen to get a better looking documentation ;)
+//
+// [1] http://www.stack.nl/~dimitri/doxygen/
+
+/** @mainpage
+
+@section Introduction
+
+@libevent is a popular API that provides a mechanism to execute a callback
+function when a specific event occurs on a file descriptor or after a
+timeout has been reached. Furthermore, @libevent also support callbacks due
+to signals or regular timeouts.
+
+@eventxx is a simple, direct, one-header inline C++ wrapper for @libevent.
+Yes, it's just one header file, so if you want to use it you can just copy
+the file to your project and you are set (well, you'll need to link to
+@libevent too ;).
+
+It's designed to be as close to use to @libevent (without compromising
+modern C++ programming techniques) and efficient (since all implementation
+is trivial and inline, theoretically, it imposes no overhead at all) as
+possible.
+
+Please, visit the @eventxx website for the latest version of this
+documentation.
+
+You can always get the <a
+href="http://www.llucax.com.ar/~luca/eventxx/releases/eventxx.tar.gz">current
+release</a> from the
+<a href="http://www.llucax.com.ar/~luca/eventxx/releases/">release
+directory</a> or grab the
+<a href="http://www.llucax.com.ar/~luca/repos/eventxx/">most up to date
+sources</a> from the <a href="http://www.darcs.net/">darcs</a> repository.
+
+You can also take a look the the <a
+href="http://auriga.wearlab.de/~alb/darcsweb/">darcsweb</a> interface to see
+the <a href="http://www.llucax.com.ar/~luca/repos/darcsweb/?r=eventxx">latest
+changes online</a> or subscribe to its
+<a href="http://www.llucax.com.ar/~luca/repos/darcsweb/?r=eventxx;a=rss">RSS
+feed</a> to follow the development.
+
+
+@section Usage
+
+You probably should read @libevent documentation to get started or at least
+just for reference, although @eventxx is pretty simple so you can jump right
+into the \ref Example section (or the example list) and write a working
+program without much trouble.
+
+This wrapper was designed to be used just like @libevent, but with C++ style
+syntax sugar (or poison, depends on your point of view ;) and goodies. The
+main difference to libevent is you always have to instance a
+eventxx::dispatcher to get an event loop. There is no implicit global event
+loop. This adds just an extra line of code for single threaded applications
+and makes things much more simpler, so I hope nobody complains about it ;).
+See eventxx::dispatcher documentation for more details.
+
+You can use use the same plain functions callbacks @libevent use or the other
+kind of function objects (see @ref events section for details on event
+types).
+
+@eventxx uses @ref exceptions to report errors. All functions have exception
+specifications, so it's easy to find out what to expect. See @ref exceptions
+section for more detail.
+
+A @c timespec abstraction is provided as eventxx::time for convenient
+argument passing. Even more, it's a @c timespec itself, with some convenient
+methods for accessing the attributes with pritier names. And even more,
+@eventxx is such a direct mapping that all eventxx::event's are @libevent
+event structs too, so theoretically you can pass a eventxx::event to
+@libevent C functions without much trouble. eventxx::dispatcher is the only
+class that is not derived from @libevent struct (@c event_base) because this
+struct it's not defined on the libevent header (just declared).
+
+Maybe you shouldn't know this implementation details to keep the abstraction,
+but this is a basic design goal of this wrapper so there is not much chance
+that this changes in the future (but use this knowledge with care, you have
+been  warned ;).
+
+
+@section Example
+
+@code
+#include <eventxx>
+#include <iostream>
+#include <csignal>
+
+struct handler
+{
+	eventxx::dispatcher& d;
+	int i;
+	handler(eventxx::dispatcher& d): d(d), i(0) {}
+	void operator() (int signum, eventxx::type event)
+	{
+		if (i < 5) std::cout << "keep going...\n";
+		else
+		{
+			std::cout << "done!\n";
+			d.exit();
+		}
+	}
+};
+
+void sighandler(int signum, short event, void* data)
+{
+	int& i = *static_cast< int* >(data);
+	std::cout << ++i << " interrupts, ";
+}
+
+int main()
+{
+	eventxx::dispatcher d;
+	handler h(d);
+	eventxx::csignal sigev(SIGINT, sighandler, &h.i);
+	eventxx::signal< handler > e(SIGINT, h);
+	d.add(sigev);
+	d.add(e);
+	d.dispatch();
+	return 0;
+}
+@endcode
+
+You can see more examples on the test directory of the distribution or on the
+examples related page.
+
+
+@section Status
+
+This library has not been widely used yet, but it's used in some serious
+projects, so I think it's moderately stable now. The library has no support
+for buffered events yet, but patches are welcome. It doesn't support the
+HTTP stuff, and probably never will because that has nothing to do with
+event handling.
+
+@libevent had a memory leak before version 1.3b (before 1.2 it didn't even
+had a way free that memory, from version 1.2 to 1.3a, if you tried to free
+the memory the program @c abort() because a failed assertion). Because of
+that, there is a way to disable the @link eventxx::dispatcher::~dispatcher()
+dispatcher destructor @endlink (which calls the inexistent/broken
+@c event_base_free() function). So if you use a @libevent version previous
+to 1.3b, you have to compile your programs defining the
+@c EVENTXX_NO_EVENT_BASE_FREE macro.
+
+If something is broken it would be really easy to fix because @eventxx is
+just a simple wrapper around @libevent. So, please try it out, and if you
+have any problems, <a href="mailto:llucax+eventxx@gmail.com">drop me an
+e-mail</a> and and I'll fix it ASAP (or provide a patch and you will be my
+best friend ;).
+
+If you use this library, please drop me an e-mail with your thoughts, or
+simply saying "I use it", so I can keep track of how many people really use
+it.
+
+@author Leandro Lucarella <llucax+eventxx@gmail.com>
+
+@version 0.6
+
+@par License
+This program is under the BOLA license (see
+http://auriga.wearlab.de/~alb/bola/ for more details or read the
+<a href="http://www.llucax.com.ar/~luca/repos/eventxx/LICENSE">LICENSE</a>
+file itself, it's very short and it basically says it's Public Domain).
+
+*/
+
+/** @example c-way.cpp
+This is a simple example illustrating the usage with C-like callback
+functions.
+*/
+
+/** @example functor-way.cpp
+This is a simple example illustrating the usage with function object
+callbacks.
+*/
+
+/** @example wrapped-functor-way.cpp
+This is a simple example illustrating the usage with an arbitrary member
+function as an event handler callbacks.
+*/
+
+/** @example mixed-way.cpp
+This is a simple example illustrating the usage with a mix of C-like callbacks
+and function object callbacks.
+*/
+
+/** @example bench.cpp
+This is a benchmark example, extracted from libevent and ported to eventxx.
+*/
+
+/** @example prio-test.cpp
+This is a priority usage example.
+*/
+
+/** @example test-time.cpp
+This is a timer usage example ported from libevent.
+*/
+
+/** @example test-eof.cpp
+This is some kind of test of EOF ported from libevent.
+*/
+
+/** @example test-weof.cpp
+Another test of EOF ported from libevent.
+*/
+
+/** @example trivial.cpp
+This is the most trivial example.
+*/
+
