@@ -126,8 +126,7 @@ examples related page.
 
 @section Status
 
-This library has not been widely used yet, but it's used in some serious
-projects, so I think it's moderately stable now. The library has no support
+I think the library is moderately stable now. The library has no support
 for buffered events yet, but patches are welcome. It doesn't support the
 HTTP stuff, and probably never will because that has nothing to do with
 event handling.
