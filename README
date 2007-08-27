@@ -31,13 +31,12 @@ release</a> from the
 <a href="http://www.llucax.com.ar/~luca/eventxx/releases/">release
 directory</a> or grab the
 <a href="http://www.llucax.com.ar/~luca/repos/eventxx/">most up to date
-sources</a> from the <a href="http://www.darcs.net/">darcs</a> repository.
+sources</a> from the <a href="http://git.or.cz/">git</a> repository.
 
 You can also take a look the the <a
-href="http://auriga.wearlab.de/~alb/darcsweb/">darcsweb</a> interface to see
-the <a href="http://www.llucax.com.ar/~luca/repos/darcsweb/?r=eventxx">latest
-changes online</a> or subscribe to its
-<a href="http://www.llucax.com.ar/~luca/repos/darcsweb/?r=eventxx;a=rss">RSS
+href="http://git.llucax.com.ar/?p=software/eventxx.git;a=summary">eventxx
+gitweb</a> interface to see the latest changes online or subscribe to its
+<a href="http://git.llucax.com.ar/?p=software/eventxx.git;a=atom">RSS
 feed</a> to follow the development.
 
 
