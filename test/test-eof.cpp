@@ -50,7 +50,7 @@ read_cb(int fd, short event, void *arg)
 int
 main (int argc, char **argv)
 {
-	char *test = "test string";
+	const char* test = "test string";
 	int pair[2];
 
 	if (socketpair(AF_UNIX, SOCK_STREAM, 0, pair) == -1)

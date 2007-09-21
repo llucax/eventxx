@@ -33,7 +33,7 @@ eventxx::event< cb_t >* ev;
 void
 write_cb(int fd, short event)
 {
-	char *test = "test string";
+	const char* test = "test string";
 	int len;
 
 	len = write(fd, test, strlen(test) + 1);
