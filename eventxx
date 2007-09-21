@@ -201,7 +201,9 @@ inline
 type operator| (const type& t1, const type& t2)
 {
 	int r = static_cast< int >(t1) | static_cast< int >(t2);
-	return *reinterpret_cast< type* >(&r);
+	int* pr = &r; // Avoid some weird warning about dereferencing
+	              // type-punned pointer will break strict-aliasing rules
+	return *reinterpret_cast< type* >(pr);
 }
 
 
@@ -320,7 +322,10 @@ struct event: basic_event
 			F& handler = *reinterpret_cast< F* >(h);
 			// Hackish, but this way the handler can get a clean
 			// event type
-			handler(fd, *reinterpret_cast< type* >(&ev));
+			short* pev = &ev; // Avoid some weird warning about
+			                  // dereferencing type-punned pointer
+					  // will break strict-aliasing rules
+			handler(fd, *reinterpret_cast< type* >(pev));
 		}
 
 }; // struct event< F >
