@@ -1,0 +1,10 @@
+test/bench
+test/c-way
+test/functor-way
+test/mixed-way
+test/prio-test
+test/test-eof
+test/test-time
+test/test-weof
+test/trivial
+test/wrapped-functor-way
