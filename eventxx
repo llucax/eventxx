@@ -201,9 +201,7 @@ inline
 type operator| (const type& t1, const type& t2)
 {
 	int r = static_cast< int >(t1) | static_cast< int >(t2);
-	int* pr = &r; // Avoid some weird warning about dereferencing
-	              // type-punned pointer will break strict-aliasing rules
-	return *reinterpret_cast< type* >(pr);
+	return static_cast< type >(r);
 }
 
 
