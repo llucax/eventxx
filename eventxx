@@ -320,10 +320,7 @@ struct event: basic_event
 			F& handler = *reinterpret_cast< F* >(h);
 			// Hackish, but this way the handler can get a clean
 			// event type
-			short* pev = &ev; // Avoid some weird warning about
-			                  // dereferencing type-punned pointer
-					  // will break strict-aliasing rules
-			handler(fd, *reinterpret_cast< type* >(pev));
+			handler(fd, static_cast< type >(ev));
 		}
 
 }; // struct event< F >
