@@ -93,7 +93,7 @@ run_once(void)
 		d.add(*events[i]);
 	}
 
-	d.dispatch(EVLOOP_ONCE | EVLOOP_NONBLOCK);
+	d.dispatch(eventxx::ONCE | eventxx::NONBLOCK);
 
 	fired = 0;
 	space = num_pipes / num_active;
