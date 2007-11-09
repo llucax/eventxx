@@ -791,6 +791,11 @@ struct dispatcher
 			handler(fd, *reinterpret_cast< type* >(&ev));
 		}
 
+	private:
+		// Hide nonsense copy-constructor and operator=
+		dispatcher(const dispatcher&);
+		dispatcher& operator=(const dispatcher&);
+
 }; // struct dispatcher
 
 } // namespace eventxx
