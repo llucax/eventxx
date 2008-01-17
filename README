@@ -126,10 +126,9 @@ examples related page.
 
 @section Status
 
-I think the library is moderately stable now. The library has no support
-for buffered events yet, but patches are welcome. It doesn't support the
-HTTP stuff, and probably never will because that has nothing to do with
-event handling.
+I think the library is stable now. The library has no support for buffered
+events yet, but patches are welcome. It doesn't support the HTTP stuff, and
+probably never will because that has nothing to do with event handling.
 
 @libevent had a memory leak before version 1.3b (before 1.2 it didn't even
 had a way free that memory, from version 1.2 to 1.3a, if you tried to free
@@ -152,7 +151,7 @@ it.
 
 @author Leandro Lucarella <llucax+eventxx@gmail.com>
 
-@version 0.7
+@version 1.0
 
 @par License
 This program is under the BOLA license (see
