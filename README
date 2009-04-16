@@ -25,6 +25,8 @@ possible.
 Please, visit the @eventxx website for the latest version of this
 documentation.
 
+@section Download
+
 You can always get the <a href="@home/releases/eventxx.tar.gz">current
 release</a> from the <a href="@home/releases/">release directory</a> or
 grab the <a href="@gitweb?a=snapshot">most up to date sources</a> from
