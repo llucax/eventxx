@@ -60,7 +60,7 @@
 
 static int count, writes, fired;
 static int *pipes;
-static int num_pipes, num_active, num_writes;
+static unsigned num_pipes, num_active, num_writes;
 static std::vector< eventxx::cevent* > events;
 static eventxx::dispatcher d;
 
@@ -68,7 +68,7 @@ static eventxx::dispatcher d;
 void
 read_cb(int fd, short which, void *arg)
 {
-	int idx = (int) arg, widx = idx + 1;
+	size_t idx = (size_t) arg, widx = idx + 1;
 	u_char ch;
 
 	count += read(fd, &ch, sizeof(ch));
@@ -84,7 +84,8 @@ read_cb(int fd, short which, void *arg)
 eventxx::time *
 run_once(void)
 {
-	int *cp, i, space;
+	size_t i;
+	int *cp, space;
 	static eventxx::time ts, te;
 
 	for (cp = pipes, i = 0; i < num_pipes; i++, cp += 2) {
@@ -130,9 +131,9 @@ int
 main (int argc, char **argv)
 {
 	struct rlimit rl;
-	int i, c;
+	size_t i;
 	eventxx::time* tv;
-	int *cp;
+	int c, *cp;
 	extern char *optarg;
 
 	num_pipes = 100;
