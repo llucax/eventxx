@@ -2,10 +2,12 @@
 #include <iostream>
 #include <map>
 #include <csignal>
+#include <cstdlib>
 
 using eventxx::dispatcher;
 
-#define OSASSERT(func, ...) if (func(__VA_ARGS__) == -1) { perror(#func "()"); exit(1); }
+#define OSASSERT(func, ...) \
+	if (func(__VA_ARGS__) == -1) { perror(#func "()"); std::exit(1); }
 
 struct handler
 {
