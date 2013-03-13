@@ -1,3 +1,4 @@
+doc/
 test/bench
 test/c-way
 test/functor-way
