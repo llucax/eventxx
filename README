@@ -36,9 +36,6 @@ You can also take a look the the <a href="@gitweb">eventxx gitweb</a>
 interface to see the latest changes online or subscribe to its
 <a href="@gitweb?a=atom">Atom feed</a> to follow the development.
 
-For more information, bug reports or support, please visit the
-<a href="@eventxx">eventxx project</a>.
-
 
 @section Usage
 
