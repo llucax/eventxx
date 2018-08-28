@@ -37,7 +37,7 @@ interface to see the latest changes online or subscribe to its
 <a href="@gitweb?a=atom">Atom feed</a> to follow the development.
 
 For more information, bug reports or support, please visit the
-<a href="@redmine">eventxx project</a>.
+<a href="@eventxx">eventxx project</a>.
 
 
 @section Usage

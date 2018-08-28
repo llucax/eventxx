@@ -229,10 +229,9 @@ TAB_SIZE               = 8
 # newlines.
 
 ALIASES                = "libevent=<a href='http://monkey.org/~provos/libevent/'>libevent</a> " \
-                         "eventxx=<a href=\"http://proj.llucax.com.ar/home/eventxx/\"><strong>eventxx</strong></a> " \
-                         "home=http://proj.llucax.com.ar/home/eventxx" \
-                         "redmine=http://proj.llucax.com.ar/projects/show/eventxx" \
-                         "gitweb=http://git.llucax.com.ar/w/software/eventxx.git"
+                         "eventxx=<a href=\"https://llucax.com/proj/eventxx/\"><strong>eventxx</strong></a> " \
+                         "home=https://llucax.com/proj/eventxx" \
+                         "gitweb=https://git.llucax.com/w/software/eventxx.git"
 
 # This tag can be used to specify a number of word-keyword mappings (TCL only).
 # A mapping has the form "name=value". For example adding "class=itcl::class"
