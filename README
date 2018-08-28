@@ -30,7 +30,7 @@ documentation.
 You can always get the <a href="@home/releases/eventxx.tar.gz">current
 release</a> from the <a href="@home/releases/">release directory</a> or
 grab the <a href="@gitweb?a=snapshot">most up to date sources</a> from
-the <a href="http://git.or.cz/">git</a> repository.
+the <a href="https://git-scm.com/">git</a> repository.
 
 You can also take a look the the <a href="@gitweb">eventxx gitweb</a>
 interface to see the latest changes online or subscribe to its
